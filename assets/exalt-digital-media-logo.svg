@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1327" role="img" aria-labelledby="title desc">
+  <title id="title">Exalt Digital Media logo</title>
+  <desc id="desc">Blue EXALT lettering above DIGITAL MEDIA, with a green curved swoosh and green sphere on a black background.</desc>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#161cff"/>
+      <stop offset="1" stop-color="#08b8ed"/>
+    </linearGradient>
+    <linearGradient id="swoosh" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d6ff00"/>
+      <stop offset="0.5" stop-color="#6fe500"/>
+      <stop offset="1" stop-color="#00bd45"/>
+    </linearGradient>
+    <radialGradient id="sphere" cx="35%" cy="25%" r="75%">
+      <stop offset="0" stop-color="#15e58a"/>
+      <stop offset="1" stop-color="#8be900"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="1327" fill="#000"/>
+  <g fill="url(#blue)" font-family="Arial, Helvetica, sans-serif" font-weight="900" text-anchor="middle">
+    <text x="450" y="820" font-size="264" letter-spacing="-10">EXALT</text>
+    <text x="450" y="900" font-size="66" letter-spacing="12">DIGITAL MEDIA</text>
+  </g>
+  <path d="M4 930 C155 1060 275 1125 450 1148 C625 1125 745 1060 896 930 C780 1120 635 1240 450 1302 C265 1240 120 1120 4 930Z" fill="url(#swoosh)"/>
+  <circle cx="450" cy="1065" r="79" fill="url(#sphere)" stroke="#000" stroke-width="14"/>
+  <path d="M392 1040 C420 1010 442 1038 467 1010 C490 984 517 1000 530 1017 C505 1028 486 1055 458 1060 C430 1065 413 1080 392 1040Z" fill="#58ed75" opacity=".55"/>
+  <path d="M410 1090 C438 1060 468 1088 497 1070 C520 1055 538 1075 544 1095 C520 1115 486 1123 458 1110 C438 1101 426 1110 410 1090Z" fill="#a8f32b" opacity=".55"/>
+</svg>
