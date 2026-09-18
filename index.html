@@ -307,9 +307,9 @@
                             <li class="flex items-center text-slate-500"><i class="fa-solid fa-xmark mr-3"></i> Custom Pipeline Workflows</li>
                         </ul>
                     </div>
-                    <a href="#contact" class="block w-full text-center py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700">
+                    <button type="button" data-checkout-plan="starter" class="block w-full text-center py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700">
                         Start 7-Day Free Trial
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Growth Tier (Highlighted) -->
@@ -333,9 +333,9 @@
                             <li class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-3"></i> Priority 1-on-1 Onboarding</li>
                         </ul>
                     </div>
-                    <a href="#contact" class="block w-full text-center py-4 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent hover:from-brand-secondary hover:to-brand-accent text-slate-950 font-black text-lg transition-all shadow-lg shadow-sky-500/25">
+                    <button type="button" data-checkout-plan="growth" class="block w-full text-center py-4 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent hover:from-brand-secondary hover:to-brand-accent text-slate-950 font-black text-lg transition-all shadow-lg shadow-sky-500/25">
                         Start 7-Day Free Trial
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -450,6 +450,28 @@
         revenueInput.addEventListener('input', updateCalculator);
 
         updateCalculator();
+
+        document.querySelectorAll('[data-checkout-plan]').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const originalLabel = button.textContent;
+                button.disabled = true;
+                button.textContent = 'Opening secure checkout…';
+                try {
+                    const result = await fetch('/api/create-checkout-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: button.dataset.checkoutPlan }),
+                    });
+                    const payload = await result.json();
+                    if (!result.ok || !payload.url) throw new Error('Checkout unavailable');
+                    window.location.assign(payload.url);
+                } catch {
+                    button.disabled = false;
+                    button.textContent = originalLabel;
+                    alert('Checkout is not available yet. Please try again shortly.');
+                }
+            });
+        });
 
         function handleFormSubmit(e) {
             e.preventDefault();
