@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Invalid request origin.' });
   }
 
-  const { businessName, name, phone, email, plan, companyWebsite } = req.body || {};
+  const { businessName, name, email, plan, companyWebsite } = req.body || {};
   if (getText(companyWebsite)) {
     return res.status(400).json({ error: 'Invalid submission.' });
   }
@@ -27,7 +27,6 @@ export default async function handler(req, res) {
   const lead = {
     businessName: getText(businessName),
     name: getText(name),
-    phone: getText(phone),
     email: getText(email),
     plan: getText(plan),
   };
@@ -50,7 +49,6 @@ export default async function handler(req, res) {
       `Business: ${lead.businessName}`,
       `Contact: ${lead.name}`,
       `Email: ${lead.email}`,
-      `Phone: ${lead.phone}`,
       `Selected plan: ${lead.plan}`,
     ].join('\n'),
   });
