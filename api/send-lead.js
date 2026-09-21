@@ -1,3 +1,5 @@
+import { getToken } from '@vercel/connect';
+
 const MAX_FIELD_LENGTH = 500;
 
 function getText(value) {
@@ -36,9 +38,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Please provide all required fields.' });
   }
 
-  const { MAILGUN_API_KEY, MAILGUN_DOMAIN, LEAD_RECIPIENT } = process.env;
-  if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !LEAD_RECIPIENT) {
-    console.error('Mailgun environment variables are not configured');
+  const { MAILGUN_DOMAIN, LEAD_RECIPIENT } = process.env;
+  if (!MAILGUN_DOMAIN || !LEAD_RECIPIENT) {
+    console.error('Mailgun delivery settings are not configured');
     return res.status(500).json({ error: 'Email delivery is not configured.' });
   }
 
@@ -56,10 +58,13 @@ export default async function handler(req, res) {
   });
 
   try {
+    const mailgunApiKey = await getToken('api.mailgun.net/coral-harbor', {
+      subject: { type: 'app' },
+    });
     const response = await fetch(`https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`, {
       method: 'POST',
       headers: {
-        Authorization: `Basic ${Buffer.from(`api:${MAILGUN_API_KEY}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`api:${mailgunApiKey}`).toString('base64')}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: fields,
