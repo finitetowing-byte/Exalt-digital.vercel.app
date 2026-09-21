@@ -1,5 +1,8 @@
 {
   "name": "exalt-digital",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@vercel/connect": "^2.3.0"
+  }
 }
