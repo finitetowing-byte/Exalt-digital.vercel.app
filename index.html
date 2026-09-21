@@ -325,59 +325,27 @@
                     <p class="text-slate-400 mt-2">Setup takes less than 10 minutes. No long-term commitment required.</p>
                 </div>
 
-                <form id="leadForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-2">Business Name</label>
-                            <input name="businessName" type="text" required placeholder="e.g. Apex Plumbing" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-2">Your Name</label>
-                            <input name="name" type="text" required placeholder="John Doe" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500 text-sm">
-                        </div>
-                    </div>
+                <iframe
+                    src="https://api.leadconnectorhq.com/widget/form/f62lQqTLLYl1hrf5k32n"
+                    style="width:100%;height:608px;border:none;border-radius:4px"
+                    id="inline-f62lQqTLLYl1hrf5k32n"
+                    data-layout="{'id':'INLINE'}"
+                    data-trigger-type="alwaysShow"
+                    data-trigger-value=""
+                    data-activation-type="alwaysActivated"
+                    data-activation-value=""
+                    data-deactivation-type="neverDeactivate"
+                    data-deactivation-value=""
+                    data-form-name="Marketing Form - Claim Offer"
+                    data-height="608"
+                    data-layout-iframe-id="inline-f62lQqTLLYl1hrf5k32n"
+                    data-form-id="f62lQqTLLYl1hrf5k32n"
+                    data-cookie-consent="true"
+                    data-cookie-consent-provider="auto"
+                    title="Marketing Form - Claim Offer">
+                </iframe>
+                <script src="https://link.msgsndr.com/js/form_embed.js"></script>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-2">Mobile Phone (For Test SMS)</label>
-                            <input name="phone" type="tel" required placeholder="(555) 000-0000" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-300 uppercase mb-2">Email Address</label>
-                            <input name="email" type="email" required placeholder="john@apexplumbing.com" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500 text-sm">
-                        </div>
-                    </div>
-
-                    <div class="hidden" aria-hidden="true">
-                        <label for="companyWebsite">Website</label>
-                        <input id="companyWebsite" name="companyWebsite" type="text" tabindex="-1" autocomplete="off">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-300 uppercase mb-2">Selected Plan</label>
-                        <select name="plan" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500 text-sm">
-                            <option value="starter">Starter Rescue ($199/mo)</option>
-                            <option value="growth">Growth Engine ($399/mo)</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="w-full py-4 bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-black text-lg rounded-xl shadow-lg shadow-emerald-500/20 transition-all mt-4">
-                        Activate My 7-Day Trial
-                    </button>
-                    <p id="formError" class="hidden text-center text-sm text-rose-300" role="alert" aria-live="polite"></p>
-                    
-                    <p class="text-center text-xs text-slate-500 mt-4">
-                        By submitting, you agree to receive SMS account updates from Exalt Digital. Reply STOP to opt-out.
-                    </p>
-                </form>
-
-                <div id="successMsg" class="hidden text-center py-8">
-                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto mb-4">
-                        <i class="fa-solid fa-check"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-2">You're All Set!</h3>
-                    <p class="text-slate-300 text-sm">Thanks — we'll review your request and contact you shortly.</p>
-                </div>
             </div>
         </div>
     </section>
@@ -432,38 +400,8 @@
 
         updateCalculator();
 
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            const form = e.currentTarget;
-            const submitButton = form.querySelector('button[type="submit"]');
-            const formError = document.getElementById('formError');
-            formError.classList.add('hidden');
-            submitButton.disabled = true;
-            va('event', { name: 'lead_submit_attempt', data: { plan: form.elements.plan.value } });
-
-            try {
-                const response = await fetch('/api/send-lead', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(Object.fromEntries(new FormData(form)))
-                });
-
-                if (!response.ok) throw new Error('Unable to submit lead');
-                va('event', { name: 'lead_submit_success', data: { plan: form.elements.plan.value } });
-                form.classList.add('hidden');
-                document.getElementById('successMsg').classList.remove('hidden');
-            } catch (error) {
-                formError.textContent = 'We could not submit your request. Please try again or contact us at support@exaltdigitalmedia.com.';
-                formError.classList.remove('hidden');
-                submitButton.disabled = false;
-            }
-        }
-
         document.querySelectorAll('[data-track]').forEach((element) => {
-            element.addEventListener('click', () => {
-                if (element.dataset.plan) document.querySelector('[name="plan"]').value = element.dataset.plan;
-                va('event', { name: element.dataset.track });
-            });
+            element.addEventListener('click', () => va('event', { name: element.dataset.track }));
         });
     </script>
     <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6ab037182251fa7952a7b227" data-source="WEB_USER"></script>
