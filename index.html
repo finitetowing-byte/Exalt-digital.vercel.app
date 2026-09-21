@@ -282,7 +282,7 @@
                             <li class="flex items-center text-slate-500"><i class="fa-solid fa-xmark mr-3"></i> Custom Pipeline Workflows</li>
                         </ul>
                     </div>
-                    <a href="#contact" data-track="starter_trial" class="block w-full text-center py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700">
+                    <a href="#contact" data-track="starter_trial" data-plan="starter" class="block w-full text-center py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700">
                         Start 7-Day Free Trial
                     </a>
                 </div>
@@ -308,7 +308,7 @@
                             <li class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-3"></i> Priority 1-on-1 Onboarding</li>
                         </ul>
                     </div>
-                    <a href="#contact" data-track="growth_trial" class="block w-full text-center py-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-black text-lg transition-all shadow-lg shadow-sky-500/25">
+                    <a href="#contact" data-track="growth_trial" data-plan="growth" class="block w-full text-center py-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-black text-lg transition-all shadow-lg shadow-sky-500/25">
                         Start 7-Day Free Trial
                     </a>
                 </div>
@@ -439,6 +439,7 @@
             const formError = document.getElementById('formError');
             formError.classList.add('hidden');
             submitButton.disabled = true;
+            va('event', { name: 'lead_submit_attempt', data: { plan: form.elements.plan.value } });
 
             try {
                 const response = await fetch('/api/send-lead', {
@@ -459,11 +460,12 @@
         }
 
         document.querySelectorAll('[data-track]').forEach((element) => {
-            element.addEventListener('click', () => va('event', { name: element.dataset.track }));
+            element.addEventListener('click', () => {
+                if (element.dataset.plan) document.querySelector('[name="plan"]').value = element.dataset.plan;
+                va('event', { name: element.dataset.track });
+            });
         });
     </script>
     <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6ab037182251fa7952a7b227" data-source="WEB_USER"></script>
-    <!-- Vercel Web Analytics -->
-    <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </body>
 </html>
