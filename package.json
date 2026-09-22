@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@vercel/connect": "^2.3.0"
+    "@vercel/connect": "^2.3.0",
+    "stripe": "^22.6.2"
   }
 }
