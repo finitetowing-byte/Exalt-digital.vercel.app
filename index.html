@@ -282,7 +282,7 @@
                             <li class="flex items-center text-slate-500"><i class="fa-solid fa-xmark mr-3"></i> Custom Pipeline Workflows</li>
                         </ul>
                     </div>
-                    <a href="#contact" data-track="starter_trial" data-plan="starter" class="block w-full text-center py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700">
+                    <a href="#" data-checkout="starter" data-track="starter_trial" class="block w-full text-center py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-700">
                         Start 7-Day Free Trial
                     </a>
                 </div>
@@ -308,7 +308,7 @@
                             <li class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-3"></i> Priority 1-on-1 Onboarding</li>
                         </ul>
                     </div>
-                    <a href="#contact" data-track="growth_trial" data-plan="growth" class="block w-full text-center py-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-black text-lg transition-all shadow-lg shadow-sky-500/25">
+                    <a href="#" data-checkout="growth" data-track="growth_trial" class="block w-full text-center py-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-black text-lg transition-all shadow-lg shadow-sky-500/25">
                         Start 7-Day Free Trial
                     </a>
                 </div>
@@ -402,6 +402,34 @@
 
         document.querySelectorAll('[data-track]').forEach((element) => {
             element.addEventListener('click', () => va('event', { name: element.dataset.track }));
+        });
+
+        document.querySelectorAll('[data-checkout]').forEach((element) => {
+            element.addEventListener('click', async (event) => {
+                event.preventDefault();
+                if (element.dataset.loading) return;
+
+                element.dataset.loading = 'true';
+                const originalText = element.textContent;
+                element.textContent = 'Opening secure checkout…';
+                element.setAttribute('aria-busy', 'true');
+
+                try {
+                    const response = await fetch('/api/create-checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: element.dataset.checkout }),
+                    });
+                    const { url } = await response.json();
+                    if (!response.ok || !url) throw new Error('Unable to create checkout session');
+                    window.location.assign(url);
+                } catch (error) {
+                    window.alert('Checkout is temporarily unavailable. Please try again shortly.');
+                    element.textContent = originalText;
+                    element.removeAttribute('aria-busy');
+                    delete element.dataset.loading;
+                }
+            });
         });
     </script>
     <script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6ab037182251fa7952a7b227" data-source="WEB_USER"></script>
