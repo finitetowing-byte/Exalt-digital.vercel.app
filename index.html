@@ -325,26 +325,37 @@
                     <p class="text-slate-400 mt-2">Setup takes less than 10 minutes. No long-term commitment required.</p>
                 </div>
 
-                <iframe
-                    src="https://api.leadconnectorhq.com/widget/form/f62lQqTLLYl1hrf5k32n"
-                    style="width:100%;height:608px;border:none;border-radius:4px"
-                    id="inline-f62lQqTLLYl1hrf5k32n"
-                    data-layout="{'id':'INLINE'}"
-                    data-trigger-type="alwaysShow"
-                    data-trigger-value=""
-                    data-activation-type="alwaysActivated"
-                    data-activation-value=""
-                    data-deactivation-type="neverDeactivate"
-                    data-deactivation-value=""
-                    data-form-name="Marketing Form - Claim Offer"
-                    data-height="608"
-                    data-layout-iframe-id="inline-f62lQqTLLYl1hrf5k32n"
-                    data-form-id="f62lQqTLLYl1hrf5k32n"
-                    data-cookie-consent="true"
-                    data-cookie-consent-provider="auto"
-                    title="Marketing Form - Claim Offer">
-                </iframe>
-                <script src="https://link.msgsndr.com/js/form_embed.js"></script>
+                <form id="leadForm" class="space-y-5" novalidate>
+                    <div>
+                        <label for="businessName" class="block text-sm font-bold text-slate-300 mb-2">Business name</label>
+                        <input id="businessName" name="businessName" required autocomplete="organization" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500" />
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="name" class="block text-sm font-bold text-slate-300 mb-2">Your name</label>
+                            <input id="name" name="name" required autocomplete="name" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500" />
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-bold text-slate-300 mb-2">Phone</label>
+                            <input id="phone" name="phone" type="tel" required autocomplete="tel" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-bold text-slate-300 mb-2">Email</label>
+                        <input id="email" name="email" type="email" required autocomplete="email" class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500" />
+                    </div>
+                    <div>
+                        <label for="plan" class="block text-sm font-bold text-slate-300 mb-2">Plan</label>
+                        <select id="plan" name="plan" required class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-sky-500">
+                            <option value="">Select a plan</option>
+                            <option value="Starter Rescue">Starter Rescue</option>
+                            <option value="Growth Engine">Growth Engine</option>
+                        </select>
+                    </div>
+                    <input name="companyWebsite" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-black text-lg">Claim your trial</button>
+                    <p id="leadFormStatus" class="hidden text-center text-sm" role="status" aria-live="polite"></p>
+                </form>
 
             </div>
         </div>
@@ -402,6 +413,40 @@
 
         document.querySelectorAll('[data-track]').forEach((element) => {
             element.addEventListener('click', () => va('event', { name: element.dataset.track }));
+        });
+
+        const leadForm = document.getElementById('leadForm');
+        const leadFormStatus = document.getElementById('leadFormStatus');
+
+        leadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!leadForm.reportValidity()) return;
+
+            const submitButton = leadForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending…';
+            leadFormStatus.className = 'text-center text-sm text-slate-300';
+            leadFormStatus.textContent = '';
+
+            try {
+                const response = await fetch('/api/send-lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.fromEntries(new FormData(leadForm))),
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || 'Unable to submit your request.');
+                leadForm.reset();
+                leadFormStatus.className = 'text-center text-sm text-emerald-400';
+                leadFormStatus.textContent = 'Thanks — we received your request and will be in touch shortly.';
+            } catch (error) {
+                leadFormStatus.className = 'text-center text-sm text-rose-400';
+                leadFormStatus.textContent = error.message || 'Unable to submit your request. Please try again.';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
         });
 
         document.querySelectorAll('[data-checkout]').forEach((element) => {
