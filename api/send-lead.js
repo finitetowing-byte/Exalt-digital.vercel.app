@@ -58,7 +58,7 @@ export default async function handler(req, res) {
   });
 
   try {
-    const mailgunApiKey = await getToken('api.mailgun.net/coral-harbor', {
+    const mailgunApiKey = process.env.MAILGUN_API_KEY || await getToken('api.mailgun.net/coral-harbor', {
       subject: { type: 'app' },
     });
     const response = await fetch(`https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages`, {
